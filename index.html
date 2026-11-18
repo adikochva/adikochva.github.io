@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>מזראחי – האפליקציה למטיילים ישראלים במזרח</title>
+  <meta name="description" content="מזראחי: אפליקציה למטיילים ישראלים במזרח – השוואת מחירים הוגנת לטיסות, eSIM וביטוח, מפה עם המלצות מטיילים, מסלול, קהילה וכלים לדרך. 20 יעדים באסיה.">
+  <meta property="og:title" content="מזראחי – האפליקציה למטיילים ישראלים במזרח">
+  <meta property="og:description" content="השוואת מחירים הוגנת, מפה עם המלצות מטיילים, מסלול וקהילה – ב־20 יעדים באסיה.">
+  <meta name="theme-color" content="#2F5D50">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%232F5D50'/%3E%3Cpath d='M17 68 37 44 47 56Z' fill='%237A9E7E'/%3E%3Cpath d='M27 68 51 29 77 68Z' fill='%23F4F0E6'/%3E%3Ccircle cx='63' cy='33' r='8' fill='%23C77B4F'/%3E%3Crect x='17' y='68' width='66' height='3' fill='%23F4F0E6'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* צבעי "הרפתקה" – אותם צבעים כמו באפליקציה (src/constants/mizrachi.ts) */
+    :root {
+      --forest: #2F5D50; --sage: #7A9E7E; --sand: #F6F1E7; --sand-dark: #EBE2D0; --terracotta: #A85A33;
+      --sun: #C77B4F; --card: #FFFFFF; --border: #E3D9C6; --text: #1F2A26; --muted: #55625C; --mint: #DCE8DF; --peach: #FBEBDD;
+      --bg: var(--sand); --hero-fg: #F4F0E6;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #17201C; --card: #1F2A26; --border: #33433C; --text: #EEF2EF; --muted: #AEBBB4; --mint: #24372F; --peach: #3A2A20; --sand-dark: #22302A;
+      }
+    }
+    :root[data-theme="dark"] {
+      --bg: #17201C; --card: #1F2A26; --border: #33433C; --text: #EEF2EF; --muted: #AEBBB4; --mint: #24372F; --peach: #3A2A20; --sand-dark: #22302A;
+    }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: Rubik, system-ui, -apple-system, "Segoe UI", Arial, sans-serif; line-height: 1.6; }
+    a { color: inherit; }
+    .wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+
+    /* ראש הדף: רצועה ירוקה עם הרים ושמש, כמו במסך הבית של האפליקציה */
+    .hero { position: relative; overflow: hidden; background: var(--forest); color: var(--hero-fg); padding: 28px 0 120px; }
+    .hero svg.art { position: absolute; inset: auto 0 0 0; width: 100%; height: 160px; }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 22px; }
+    .brand svg { width: 44px; height: 44px; border-radius: 12px; flex: none; }
+    .hero h1 { font-size: clamp(30px, 6vw, 52px); line-height: 1.15; margin: 44px 0 12px; font-weight: 800; max-width: 18ch; }
+    .hero p.lead { font-size: clamp(17px, 2.4vw, 21px); max-width: 52ch; margin: 0 0 24px; opacity: .92; }
+    .badges { display: flex; flex-wrap: wrap; gap: 10px; }
+    .badge { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 999px; background: rgba(244,240,230,.14); border: 1px solid rgba(244,240,230,.28); font-weight: 600; font-size: 15px; }
+    .badge.sun { background: var(--sun); border-color: var(--sun); color: #fff; }
+
+    section { padding: 56px 0 8px; }
+    h2 { font-size: clamp(24px, 4vw, 34px); margin: 0 0 8px; font-weight: 800; }
+    .sub { color: var(--muted); margin: 0 0 28px; font-size: 17px; max-width: 60ch; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 22px; padding: 22px; box-shadow: 0 6px 20px rgba(47,93,80,.08); }
+    .card h3 { margin: 12px 0 6px; font-size: 19px; }
+    .card p { margin: 0; color: var(--muted); font-size: 15.5px; }
+    .icon { width: 46px; height: 46px; border-radius: 15px; background: var(--mint); display: grid; place-items: center; font-size: 24px; }
+    .icon.warm { background: var(--peach); }
+
+    .fair { background: var(--mint); border-radius: 28px; padding: 28px; display: grid; gap: 14px; }
+    .fair ul { margin: 0; padding: 0 20px 0 0; display: grid; gap: 8px; font-size: 17px; }
+    .dest { display: flex; flex-wrap: wrap; gap: 8px; }
+    .dest span { padding: 8px 14px; border-radius: 999px; background: var(--card); border: 1px solid var(--border); font-weight: 600; font-size: 15px; }
+
+    .partners { background: var(--card); border: 1px solid var(--border); border-radius: 28px; padding: 28px; display: grid; gap: 12px; }
+    .partners .en { direction: ltr; text-align: left; border-top: 1px solid var(--border); padding-top: 16px; color: var(--muted); }
+    .partners .en strong { color: var(--text); }
+    .cta { display: inline-block; margin-top: 6px; padding: 14px 22px; border-radius: 18px; background: var(--terracotta); color: #fff; text-decoration: none; font-weight: 700; font-size: 17px; }
+    .cta:focus-visible, a:focus-visible { outline: 3px solid var(--sun); outline-offset: 3px; }
+
+    footer { padding: 48px 0 40px; color: var(--muted); font-size: 14px; }
+    @media (max-width: 520px) { .hero { padding-bottom: 100px; } .card, .fair, .partners { padding: 20px; } }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <div class="brand" aria-label="מזראחי">
+        <svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" fill="#2F5D50"/><path d="M17 68 37 44 47 56Z" fill="#7A9E7E"/><path d="M27 68 51 29 77 68Z" fill="#F4F0E6"/><path d="M45 39 51 29 57 39Z" fill="#fff"/><circle cx="63" cy="33" r="8" fill="#C77B4F"/><rect x="17" y="68" width="66" height="3" fill="#F4F0E6"/></svg>
+        מזראחי
+      </div>
+      <h1>כל מה שמטייל ישראלי צריך במזרח – באפליקציה אחת</h1>
+      <p class="lead">השוואת מחירים הוגנת לטיסות, eSIM וביטוח, מפה עם המלצות של מטיילים, מסלול, קהילה וכלים לדרך. ב־20 יעדים באסיה, בעברית.</p>
+      <div class="badges">
+        <span class="badge sun">🚀 בקרוב בחנויות</span>
+        <span class="badge">🇮🇱 בעברית, למטיילים ישראלים</span>
+        <span class="badge">⚖️ הסדר רק לפי מחיר</span>
+      </div>
+    </div>
+    <svg class="art" viewBox="0 0 1200 160" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 160 180 60 300 120 470 30 640 110 800 50 980 120 1200 40V160Z" fill="#7A9E7E" opacity=".35"/>
+      <path d="M0 160 240 95 420 140 620 80 860 140 1040 100 1200 130V160Z" fill="var(--bg)"/>
+    </svg>
+  </header>
+
+  <main class="wrap">
+    <section aria-labelledby="what">
+      <h2 id="what">מה יש באפליקציה</h2>
+      <p class="sub">נבנתה לטיול תרמילאים: מהתכנון בארץ ועד היום האחרון בדרך.</p>
+      <div class="grid">
+        <article class="card"><div class="icon">💰</div><h3>השוואת מחירים הוגנת</h3><p>טיסות מישראל למזרח וחזרה עם כל הסינונים, לוח "מתי הכי זול לטוס", eSIM וחבילות גלישה, וביטוח נסיעות – עם הסבר פשוט לכל מושג.</p></article>
+        <article class="card"><div class="icon">🗺️</div><h3>מפה והמלצות מטיילים</h3><p>לינה, אוכל, כספומטים ועוד, והמלצות של מטיילים אחרים – בכל יעד ובכל עיר.</p></article>
+        <article class="card"><div class="icon">🧭</div><h3>המסלול שלי</h3><p>תחנות, תאריכים ומעברים בין ערים, הוצאות משותפות עם החברים לטיול, ורשימת ציוד לפי המסלול.</p></article>
+        <article class="card"><div class="icon warm">🧰</div><h3>כלים לדרך</h3><p>שיחון, מספרי חירום, מחשבון מטבע, ויזות לבעלי דרכון ישראלי, מזג אוויר ו־UV, ו"היעד בקצרה".</p></article>
+        <article class="card"><div class="icon warm">👋</div><h3>קהילה</h3><p>מטיילים בסביבה, קבוצות לפי יעד ותחום עניין, צ׳אט ועדכונים מהשטח.</p></article>
+        <article class="card"><div class="icon warm">🎒</div><h3>יד שנייה בארץ</h3><p>לקנות ולמכור ציוד טיולים בישראל לפני הטיסה – מטייל למטייל.</p></article>
+      </div>
+    </section>
+
+    <section aria-labelledby="fair">
+      <div class="fair">
+        <h2 id="fair">⚖️ ההבטחה שלנו: השוואה הוגנת</h2>
+        <ul>
+          <li>הסדר נקבע <strong>רק לפי המחיר האמיתי</strong> – אף פעם לא לפי עמלה.</li>
+          <li>מציגים <strong>את כל האתרים הרלוונטיים</strong>, גם כאלה שלא מרוויחים מהם כלום.</li>
+          <li><strong>לא ממציאים מחירים.</strong> אין מחיר אמיתי? כתוב "בדוק מחיר".</li>
+          <li>ליד כל רשימה יש <strong>שורת שקיפות</strong> על העמלות.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section aria-labelledby="where">
+      <h2 id="where">20 יעדים באסיה</h2>
+      <p class="sub">עם ערים, שדות תעופה, מספרי חירום ומידע מעשי לכל יעד.</p>
+      <div class="dest">
+        <span>תאילנד</span><span>הודו</span><span>וייטנאם</span><span>יפן</span><span>נפאל</span><span>סרי לנקה</span><span>פיליפינים</span><span>אינדונזיה</span><span>קמבודיה</span><span>לאוס</span><span>סין</span><span>דרום קוריאה</span><span>סינגפור</span><span>מלזיה</span><span>טייוואן</span><span>מונגוליה</span><span>קירגיזסטן</span><span>אוזבקיסטן</span><span>מיאנמר</span><span>בהוטן</span>
+      </div>
+    </section>
+
+    <section aria-labelledby="partners">
+      <div class="partners">
+        <h2 id="partners">🤝 שותפים</h2>
+        <p>חברות תעופה, סוכנויות, ספקי eSIM, חברות סלולר וביטוח – נשמח לדבר. אנחנו מבקשים בעיקר <strong>מחירים אמיתיים וקישורים ישירים</strong>, כדי שההשוואה תהיה מדויקת ושימושית. שותפות לא משנה את הסדר.</p>
+        <div class="en" lang="en">
+          <p><strong>For partners:</strong> Mizrachi is a pre-launch mobile app for Israeli travelers in Asia (20 destinations). Its price comparison is ordered by real price only — never by commission — and lists every relevant provider. We are looking for affiliate programs, deep links and price data (API or feeds) for flights, eSIMs, connectivity and travel services.</p>
+        </div>
+        <div><a class="cta" href="mailto:adikochva59@gmail.com?subject=Mizrachi%20%E2%80%93%20partnership">✉️ צרו קשר · Contact us</a></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap">
+    <p>© 2026 מזראחי · האפליקציה בפיתוח ותושק בקרוב באנדרואיד ובאייפון · פניות: <a href="mailto:adikochva59@gmail.com">adikochva59@gmail.com</a></p>
+  </footer>
+</body>
+</html>
